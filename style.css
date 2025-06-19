@@ -1,0 +1,862 @@
+/* Variables CSS */
+:root {
+    --primary-color: #5d5d8f; /* Un tono de púrpura/azul oscuro */
+    --secondary-color: #7a7ac0; /* Un tono más claro del primario */
+    --accent-color: #FF7F50; /* Coral */
+    --text-color: #333;
+    --light-text-color: #666;
+    --background-color: #f4f7f6;
+    --sidebar-bg: #2c3e50; /* Azul oscuro para la barra lateral */
+    --sidebar-text: #ecf0f1; /* Gris claro para el texto de la barra lateral */
+    --card-bg: #ffffff;
+    --border-color: #e0e0e0;
+    --shadow-light: rgba(0, 0, 0, 0.08);
+    --shadow-medium: rgba(0, 0, 0, 0.15);
+    --button-hover-bg: #4a4a7a;
+    --button-active-bg: #3a3a6a;
+
+    /* Colores para badges de estado de Envíos */
+    --status-in-transit-shipment: #3498db; /* Azul */
+    --status-delivered-shipment: #27ae60; /* Verde */
+    --status-pending-shipment: #f39c12; /* Naranja */
+    --status-delayed-shipment: #e74c3c; /* Rojo */
+    --status-cancelled-shipment: #95a5a6; /* Gris */
+
+    /* Colores para badges de estado de Vehículos */
+    --status-available-vehicle: #27ae60; /* Verde */
+    --status-in-route-vehicle: #3498db; /* Azul */
+    --status-maintenance-vehicle: #f39c12; /* Naranja */
+    --status-inactive-vehicle: #e74c3c; /* Rojo */
+}
+
+/* Base styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    display: flex;
+    min-height: 100vh;
+}
+
+.app-container {
+    display: flex;
+    width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-medium);
+    transition: width 0.3s ease;
+    flex-shrink: 0; /* Prevents sidebar from shrinking */
+}
+
+.sidebar.collapsed {
+    width: 80px;
+}
+
+.sidebar-header {
+    text-align: center;
+    padding: 10px 0 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+    display: flex; /* Make it a flex container */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center children horizontally */
+    gap: 5px; /* Space between items */
+}
+
+.sidebar.collapsed .sidebar-header {
+    padding: 10px 0;
+}
+
+/* Hide text in collapsed state */
+.sidebar.collapsed .sidebar-header h3,
+.sidebar.collapsed .sidebar-header p,
+.sidebar.collapsed .nav ul li span {
+    display: none;
+}
+
+/* Show only icon in collapsed state */
+.sidebar.collapsed .nav ul li a i {
+    margin-right: 0;
+}
+
+
+.sidebar-header .user-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 2px solid var(--accent-color);
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 1.5em;
+    color: var(--sidebar-text);
+}
+
+.sidebar-header p {
+    margin: 0;
+    font-size: 0.9em;
+    color: rgba(236, 240, 241, 0.7);
+}
+
+.nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav ul li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav ul li a i {
+    margin-right: 15px;
+    font-size: 1.2em;
+}
+
+.sidebar.collapsed .nav ul li a {
+    justify-content: center;
+    padding: 12px 0;
+}
+
+.nav ul li a:hover,
+.nav ul li a.active {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.sidebar-bottom-icons {
+    margin-top: auto; /* Pushes icons to the bottom */
+    padding: 20px;
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-bottom-icons i {
+    font-size: 1.5em;
+    color: rgba(236, 240, 241, 0.7);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.sidebar-bottom-icons i:hover {
+    color: var(--accent-color);
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-color);
+}
+
+/* Topbar */
+.topbar {
+    background-color: var(--card-bg);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-light);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.topbar-left .menu-button {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.5em;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.app-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.search-bar {
+    padding: 8px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    font-size: 0.9em;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.search-bar:focus {
+    border-color: var(--primary-color);
+}
+
+.notification-icon {
+    font-size: 1.3em;
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-profile .user-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-color);
+}
+
+/* Content Area */
+.content {
+    padding: 30px;
+    flex-grow: 1;
+    overflow-y: auto; /* Enable scrolling for content if it overflows */
+}
+
+.section {
+    display: none; /* Hidden by default */
+}
+
+.section.active {
+    display: block; /* Show active section */
+}
+
+.section h2 {
+    color: var(--primary-color);
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+/* Cards */
+.card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow-light);
+    padding: 25px;
+    margin-bottom: 25px;
+}
+
+/* KPI Cards */
+.kpi-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.kpi-card {
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+}
+
+.kpi-card h3 {
+    margin-top: 0;
+    color: var(--light-text-color);
+    font-size: 1.1em;
+}
+
+.kpi-card p {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin: 5px 0 15px;
+}
+
+.kpi-card i {
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    font-size: 3.5em;
+    color: rgba(0, 0, 0, 0.05);
+}
+
+/* Charts */
+.charts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.chart-card {
+    height: 350px; /* Fixed height for consistency */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Pushes chart and legend apart */
+    align-items: center; /* Center items horizontally */
+    box-sizing: border-box; /* Include padding in height */
+}
+
+.chart-card canvas {
+    max-width: 100%;
+    max-height: 100%;
+    flex-grow: 1; /* Allow canvas to take available space */
+}
+
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+    font-size: 0.85em;
+    gap: 15px;
+}
+
+.chart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.chart-legend-color-box {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+}
+
+/* Filter Section */
+.filter-section {
+    margin-bottom: 30px;
+}
+
+.date-filters {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.date-filters .form-group {
+    margin-bottom: 0;
+}
+
+.date-filters input[type="date"] {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    outline: none;
+    font-size: 0.95em;
+    color: var(--text-color);
+}
+
+/* Table styles (General) */
+.table-controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.table-controls input,
+.table-controls select {
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 0.95em;
+    flex-grow: 1;
+    min-width: 180px;
+}
+
+.table-container {
+    overflow-x: auto;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow-light);
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--card-bg);
+}
+
+table thead th {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+table tbody td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Action buttons in tables */
+.action-buttons button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    margin-right: 8px;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.action-buttons button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.action-buttons .view-button { color: var(--secondary-color); }
+.action-buttons .edit-button { color: var(--accent-color); }
+.action-buttons .delete-button { color: var(--status-delayed-shipment); }
+
+
+/* Status Badges */
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: white;
+    display: inline-block;
+    text-align: center;
+}
+
+.status-badge.in-ruta { background-color: var(--status-in-transit-shipment); }
+.status-badge.entregado { background-color: var(--status-delivered-shipment); }
+.status-badge.pendiente { background-color: var(--status-pending-shipment); }
+.status-badge.retrasado { background-color: var(--status-delayed-shipment); }
+.status-badge.cancelado { background-color: var(--status-cancelled-shipment); }
+
+.status-badge.disponible { background-color: var(--status-available-vehicle); }
+.status-badge.en-ruta-vehiculo { background-color: var(--status-in-route-vehicle); }
+.status-badge.en-mantenimiento { background-color: var(--status-maintenance-vehicle); }
+.status-badge.inactivo { background-color: var(--status-inactive-vehicle); }
+
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.pagination button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.pagination button:hover {
+    background-color: var(--button-hover-bg);
+}
+
+.pagination button:disabled {
+    background-color: var(--border-color);
+    cursor: not-allowed;
+}
+
+.pagination span {
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+
+/* Modals */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    padding: 20px; /* Add some padding */
+    box-sizing: border-box; /* Include padding in dimensions */
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    margin: auto;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-medium);
+    width: 90%; /* Responsive width */
+    max-width: 600px; /* Max width */
+    position: relative;
+    box-sizing: border-box;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close-button {
+    color: var(--light-text-color);
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.modal-content h2 {
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 15px 30px; /* Row and column gap */
+    margin-bottom: 30px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column; /* Stack label and value */
+    gap: 5px;
+}
+
+.detail-item strong {
+    color: var(--light-text-color);
+    font-weight: 600;
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
+
+.detail-item span {
+    color: var(--text-color);
+    font-size: 1em;
+}
+
+.detail-item.full-width {
+    grid-column: 1 / -1; /* Spans across all columns */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--light-text-color);
+    font-size: 0.9em;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+    width: calc(100% - 24px); /* Full width minus padding */
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1em;
+    color: var(--text-color);
+    background-color: #fcfcfc;
+    transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.form-group textarea {
+    resize: vertical; /* Allow vertical resizing */
+    min-height: 80px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+}
+
+/* Buttons */
+.primary-button, .secondary-button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    border: none;
+}
+
+.primary-button {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.primary-button:hover {
+    background-color: var(--button-hover-bg);
+}
+
+.secondary-button {
+    background-color: #f0f0f0;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.secondary-button:hover {
+    background-color: #e0e0e0;
+}
+
+/* Cancel Button specific styles */
+.cancel-button {
+    background-color: #d9534f; /* Reddish for cancel */
+    color: white;
+    border: none;
+}
+
+.cancel-button:hover {
+    background-color: #c9302c; /* Darker red on hover */
+}
+
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 80px; /* Start collapsed on smaller screens */
+    }
+    .sidebar-header h3,
+    .sidebar-header p,
+    .nav ul li span {
+        display: none;
+    }
+    .nav ul li a {
+        justify-content: center;
+        padding: 12px 0;
+    }
+    .nav ul li a i {
+        margin-right: 0;
+    }
+
+    .topbar {
+        padding: 15px 20px;
+    }
+    .app-title {
+        font-size: 1.2em;
+    }
+    .search-bar {
+        width: 150px;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .kpi-cards, .charts-container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .detail-grid {
+        grid-template-columns: 1fr; /* Stack details vertically on smaller screens */
+    }
+    .modal-content {
+        max-width: 500px;
+    }
+    .table-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .table-controls input, .table-controls select, .table-controls button {
+        width: 100%; /* Full width for controls */
+    }
+    .action-buttons {
+        display: flex; /* Ensure buttons stack or wrap nicely */
+        justify-content: flex-start; /* Align to start */
+        flex-wrap: wrap; /* Wrap if not enough space */
+        gap: 5px; /* Small gap between action buttons */
+    }
+}
+
+
+/* Table Controls (General for both, specific overrides apply) */
+.table-controls {
+    flex-direction: column;
+    align-items: stretch;
+}
+.table-controls input, .table-controls select {
+    width: 100%;
+}
+
+
+.modal-content {
+    width: 95%;
+    padding: 20px;
+}
+.modal-content h2 {
+    font-size: 1.5em;
+}
+.detail-item strong, .detail-item span {
+    flex-basis: auto;
+    width: 50%;
+}
+.detail-item {
+    flex-wrap: wrap;
+}
+.detail-item strong {
+    text-align: left;
+}
+.detail-item span {
+    text-align: right;
+}
+.modal-actions {
+    flex-direction: column;
+    gap: 10px;
+}
+.modal-actions button {
+    width: 100%;
+}
+
+
+@media (max-width: 480px) {
+    .nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    .nav ul li {
+        width: 100%;
+        text-align: center;
+    }
+    .nav ul li a {
+        justify-content: center;
+    }
+    .topbar-right {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .search-bar {
+        flex-grow: 1;
+        width: auto; /* Allow it to grow, but not be fixed 100% */
+    }
+    .user-profile {
+        flex-grow: 1;
+        justify-content: center;
+    }
+    .kpi-cards, .charts-container {
+        grid-template-columns: 1fr; /* Single column layout for very small screens */
+    }
+    .date-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .date-filters input, .date-filters button {
+        width: 100%;
+    }
+    .modal-content {
+        padding: 15px;
+    }
+    .modal-content h2 {
+        font-size: 1.2em;
+    }
+    .detail-grid {
+        gap: 10px;
+    }
+    .modal-actions {
+        flex-direction: column;
+    }
+}
+
+/* --- NUEVOS ESTILOS para el Mapa de Envíos --- */
+.map-container {
+    margin-top: 30px; /* Espacio superior para separarlo de la tabla */
+    padding: 20px;
+    background-color: var(--card-bg); /* Usa el color de fondo de tus tarjetas */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: var(--shadow-light); /* Sombra ligera */
+}
+
+#shipmentMap {
+    height: 500px; /* Asegura la altura definida en el HTML */
+    width: 100%;
+    border-radius: 8px; /* Bordes redondeados para el mapa en sí */
+}

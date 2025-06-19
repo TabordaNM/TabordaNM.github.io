@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMS Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Admin Panel</h3>
+                <p>Bienvenido</p>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="#dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#envios" id="navEnvios"><i class="fas fa-truck"></i> Monitoreo de Envíos</a></li>
+                    <li><a href="#flota"><i class="fas fa-truck-moving"></i> Gestión de Flota</a></li>
+                    <li><a href="#mantenimiento"><i class="fas fa-wrench"></i> Mantenimiento</a></li>
+                    <li><a href="#reportes"><i class="fas fa-chart-line"></i> Reportes</a></li>
+                    <li><a href="#alertas"><i class="fas fa-bell"></i> Alertas y Notificaciones</a></li>
+                    <li><a href="#configuracion"><i class="fas fa-cogs"></i> Configuración</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-bottom-icons">
+                <i class="fas fa-question-circle"></i>
+                <i class="fas fa-cog"></i>
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <button id="toggleSidebar" class="menu-button"><i class="fas fa-bars"></i></button>
+                    <span class="app-title">TMS Dashboard</span>
+                </div>
+                <div class="topbar-right">
+                    <input type="text" placeholder="Buscar..." class="search-bar">
+                    <i class="fas fa-bell notification-icon"></i>
+                    <div class="user-profile">
+                        <img src="./assets/user_avatar.png" alt="User Avatar" class="user-avatar">
+                        <span>Usuario Demo</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div id="dashboard" class="section active">
+                    <h2>Dashboard</h2>
+                    <div class="kpi-cards">
+                        <div class="kpi-card card">
+                            <h3>Envíos Totales</h3>
+                            <p id="kpiTotalShipments">0</p>
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="kpi-card card">
+                            <h3>En Ruta</h3>
+                            <p id="kpiInTransit">0</p>
+                            <i class="fas fa-truck-moving"></i>
+                        </div>
+                        <div class="kpi-card card">
+                            <h3>Entregados</h3>
+                            <p id="kpiDelivered">0</p>
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="kpi-card card">
+                            <h3>Retrasados</h3>
+                            <p id="kpiDelayed">0</p>
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+
+                    <div class="charts-container">
+                        <div class="chart-card card">
+                            <h3>Estado de Envíos</h3>
+                            <canvas id="shipmentsStatusChart"></canvas>
+                            <div id="shipmentsStatusChart-legend" class="chart-legend"></div>
+                        </div>
+                        <div class="chart-card card">
+                            <h3>Envíos Mensuales</h3>
+                            <canvas id="monthlyShipmentsChart"></canvas>
+                        </div>
+                        <div class="chart-card card">
+                            <h3>Top Orígenes de Envíos</h3>
+                            <canvas id="topOriginsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="filter-section card">
+                        <h3>Filtro por Fecha</h3>
+                        <div class="date-filters">
+                            <div class="form-group">
+                                <label for="startDate">Desde:</label>
+                                <input type="date" id="startDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="endDate">Hasta:</label>
+                                <input type="date" id="endDate">
+                            </div>
+                            <button id="applyDateFilter" class="primary-button">Aplicar</button>
+                            <button id="resetDateFilter" class="secondary-button">Restablecer</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="envios" class="section">
+                    <h2>Monitoreo de Envíos</h2>
+                    <div class="table-controls">
+                        <input type="text" id="shipmentSearch" placeholder="Buscar por ID, Origen, Destino...">
+                        <select id="shipmentStatusFilter">
+                            <option value="">Todos los Estados</option>
+                            <option value="En Ruta">En Ruta</option>
+                            <option value="Entregado">Entregado</option>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Retrasado">Retrasado</option>
+                            <option value="Cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="table-container">
+                        <table id="shipmentsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Origen</th>
+                                    <th>Destino</th>
+                                    <th>Estado</th>
+                                    <th>Fecha Envío</th>
+                                    <th>Fecha Entrega Estimada</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <button id="prevPage">Anterior</button>
+                        <span id="currentPage">1</span> / <span id="totalPages">1</span>
+                        <button id="nextPage">Siguiente</button>
+                    </div>
+
+                    <div class="map-container card">
+                        <h3>Visualización de Rutas</h3>
+                        <div id="shipmentMap"></div>
+                    </div>
+                    </div>
+
+                <div id="flota" class="section">
+                    <h2>Gestión de Flota</h2>
+                    <div class="table-controls">
+                        <input type="text" id="vehicleSearch" placeholder="Buscar por ID, Tipo, Modelo...">
+                        <select id="vehicleStatusFilter">
+                            <option value="">Todos los Estados</option>
+                            <option value="Disponible">Disponible</option>
+                            <option value="En Ruta">En Ruta</option>
+                            <option value="En Mantenimiento">En Mantenimiento</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                        <button id="addVehicleBtn" class="primary-button"><i class="fas fa-plus"></i> Añadir Vehículo</button>
+                    </div>
+                    <div class="table-container">
+                        <table id="vehiclesTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tipo</th>
+                                    <th>Modelo</th>
+                                    <th>Placa</th>
+                                    <th>Capacidad (kg)</th>
+                                    <th>Estado</th>
+                                    <th>Último Mantenimiento</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <button id="prevVehiclePage">Anterior</button>
+                        <span id="currentVehiclePage">1</span> / <span id="totalVehiclePages">1</span>
+                        <button id="nextVehiclePage">Siguiente</button>
+                    </div>
+                </div>
+
+                <div id="mantenimiento" class="section">
+                    <h2>Mantenimiento</h2>
+                    <p>Aquí se gestionarán las tareas de mantenimiento de la flota.</p>
+                </div>
+
+                <div id="reportes" class="section">
+                    <h2>Reportes</h2>
+                    <p>Generación de reportes y estadísticas.</p>
+                </div>
+
+                <div id="alertas" class="section">
+                    <h2>Alertas y Notificaciones</h2>
+                    <p>Historial y configuración de alertas.</p>
+                </div>
+
+                <div id="configuracion" class="section">
+                    <h2>Configuración</h2>
+                    <p>Ajustes generales de la aplicación.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="shipmentDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Detalles del Envío</h2>
+            <div class="detail-grid">
+                <div class="detail-item"><strong>ID:</strong> <span id="detailShipmentId"></span></div>
+                <div class="detail-item"><strong>Origen:</strong> <span id="detailOrigin"></span></div>
+                <div class="detail-item"><strong>Destino:</strong> <span id="detailDestination"></span></div>
+                <div class="detail-item"><strong>Estado:</strong> <span id="detailStatus"></span></div>
+                <div class="detail-item"><strong>Fecha Envío:</strong> <span id="detailShipmentDate"></span></div>
+                <div class="detail-item"><strong>Fecha Entrega Estimada:</strong> <span id="detailDeliveryDate"></span></div>
+                <div class="detail-item"><strong>Vehículo Asignado:</strong> <span id="detailAssignedVehicle"></span></div>
+                <div class="detail-item full-width"><strong>Notas:</strong> <span id="detailNotes"></span></div>
+            </div>
+            <div class="modal-actions">
+                <button id="editShipmentDetailsBtn" class="secondary-button">Editar Envío</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editShipmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="shipmentModalTitle">Editar Envío</h2>
+            <form id="editShipmentForm">
+                <input type="hidden" id="editShipmentId">
+                <div class="form-group">
+                    <label for="editOrigin">Origen:</label>
+                    <input type="text" id="editOrigin" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDestination">Destino:</label>
+                    <input type="text" id="editDestination" required>
+                </div>
+                <div class="form-group">
+                    <label for="editStatus">Estado:</label>
+                    <select id="editStatus" required>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="En Ruta">En Ruta</option>
+                        <option value="Entregado">Entregado</option>
+                        <option value="Retrasado">Retrasado</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editShipmentDate">Fecha de Envío:</label>
+                    <input type="date" id="editShipmentDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDeliveryDate">Fecha de Entrega Estimada:</label>
+                    <input type="date" id="editDeliveryDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAssignedVehicle">Vehículo Asignado:</label>
+                    <input type="text" id="editAssignedVehicle">
+                </div>
+                <div class="form-group">
+                    <label for="editNotes">Notas:</label>
+                    <textarea id="editNotes" rows="3"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="primary-button">Guardar Cambios</button>
+                    <button type="button" class="secondary-button cancel-button">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="vehicleDetailModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Detalles del Vehículo</h2>
+            <div class="detail-grid">
+                <div class="detail-item"><strong>ID:</strong> <span id="detailVehicleId"></span></div>
+                <div class="detail-item"><strong>Tipo:</strong> <span id="detailVehicleType"></span></div>
+                <div class="detail-item"><strong>Modelo:</strong> <span id="detailVehicleModel"></span></div>
+                <div class="detail-item"><strong>Placa:</strong> <span id="detailVehicleLicensePlate"></span></div>
+                <div class="detail-item"><strong>Capacidad (kg):</strong> <span id="detailVehicleCapacity"></span></div>
+                <div class="detail-item"><strong>Estado:</strong> <span id="detailVehicleStatus"></span></div>
+                <div class="detail-item"><strong>Último Mantenimiento:</strong> <span id="detailVehicleLastMaintenance"></span></div>
+                <div class="detail-item full-width"><strong>Historial de Mantenimiento:</strong> <span id="detailVehicleMaintenanceHistory"></span></div>
+            </div>
+            <div class="modal-actions">
+                <button id="editVehicleDetailsBtn" class="secondary-button">Editar Vehículo</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="addEditVehicleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="vehicleModalTitle">Añadir Nuevo Vehículo</h2>
+            <form id="addEditVehicleForm">
+                <input type="hidden" id="vehicleEditId">
+                <div class="form-group">
+                    <label for="vehicleType">Tipo:</label>
+                    <input type="text" id="vehicleType" required>
+                </div>
+                <div class="form-group">
+                    <label for="vehicleModel">Modelo:</label>
+                    <input type="text" id="vehicleModel" required>
+                </div>
+                <div class="form-group">
+                    <label for="vehicleLicensePlate">Placa:</label>
+                    <input type="text" id="vehicleLicensePlate" required>
+                </div>
+                <div class="form-group">
+                    <label for="vehicleCapacity">Capacidad (kg):</label>
+                    <input type="number" id="vehicleCapacity" required>
+                </div>
+                <div class="form-group">
+                    <label for="vehicleStatus">Estado:</label>
+                    <select id="vehicleStatus">
+                        <option value="Disponible">Disponible</option>
+                        <option value="En Ruta">En Ruta</option>
+                        <option value="En Mantenimiento">En Mantenimiento</option>
+                        <option value="Inactivo">Inactivo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="vehicleLastMaintenance">Último Mantenimiento:</label>
+                    <input type="date" id="vehicleLastMaintenance">
+                </div>
+                <div class="form-group">
+                    <label for="vehicleMaintenanceHistory">Historial de Mantenimiento:</label>
+                    <textarea id="vehicleMaintenanceHistory" rows="4" placeholder="Notas sobre mantenimientos anteriores"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="primary-button">Guardar Vehículo</button>
+                    <button type="button" class="secondary-button cancel-button">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
